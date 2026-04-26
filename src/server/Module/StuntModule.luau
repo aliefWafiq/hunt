@@ -8,9 +8,13 @@ function StuntModule.StuntEnemy(stuntDuration)
 	for _, obj in pairs(game.Workspace:GetChildren()) do
 		if obj:IsA("Model") and obj.Name == "chago" then
 			local hrp = obj:FindFirstChild("HumanoidRootPart")
+			local humanoid = obj:FindFirstChild("Humanoid")
+			local footstep = hrp:WaitForChild("CustomFootsteps")
 
 			if hrp then
 				hrp.Anchored = true
+				humanoid.WalkSpeed = 0
+				footstep.Volume = 0
 				local newAnim = Instance.new("Animation")
 				newAnim.AnimationId = stuntAnim
 				stuntAnimTrack = obj:FindFirstChild("Humanoid"):LoadAnimation(newAnim)
@@ -20,6 +24,8 @@ function StuntModule.StuntEnemy(stuntDuration)
 					if hrp then hrp.Anchored = false end
 					if stuntAnimTrack then
 						stuntAnimTrack:Stop(0.3)
+						humanoid.WalkSpeed = 10
+						footstep.Volume = 1
 					end
 				end)
 			end
