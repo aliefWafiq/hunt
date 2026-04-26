@@ -1,0 +1,92 @@
+{
+  "name": "Hunt",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "LoadingScreen": {
+        "$path": "src/client/LoadingScreen.client.luau"
+      }
+    },
+
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      },
+      "Packages": {
+        "$path": "Packages"
+      }
+    },
+
+    "ServerScriptService": {
+      "Handler": {
+        "$path": "src/server/Handler"
+      },
+      "ServerPackages": {
+        "$path": "ServerPackages"
+      }
+    },
+
+    "ServerStorage": {
+      "$className": "ServerStorage",
+      "Module": {
+        "$path": "src/server/Module"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    },
+
+    "Workspace": {
+      "$properties": {
+        "FilteringEnabled": true
+      },
+      "Baseplate": {
+        "$className": "Part",
+        "$properties": {
+          "Anchored": true,
+          "Color": [
+            0.38823,
+            0.37254,
+            0.38823
+          ],
+          "Locked": true,
+          "Position": [
+            -84,
+            -43.111,
+            -368
+          ],
+          "Size": [
+            680, 
+            20,
+            1248
+          ]
+        }
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "Ambient": [
+          0,
+          0,
+          0
+        ],
+        "Brightness": 2,
+        "GlobalShadows": true,
+        "Outlines": false,
+        "Technology": "Voxel"
+      }
+    },
+    "SoundService": {
+      "$properties": {
+        "RespectFilteringEnabled": true
+      }
+    }
+  }
+}
