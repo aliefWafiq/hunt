@@ -70,6 +70,8 @@ emergencyMeeting.OnServerEvent:Connect(function(playerTriggered)
 		StuntEnemy.StuntEnemy(meetingDuration + 15)
 		EmergencyMeetingAnnounce:FireAllClients()
 
+		print("Emergency meeting triggered by: "..playerTriggered.Name	)
+
 		isCooldown = true
 
 		local seats = seatFolder:GetChildren()
