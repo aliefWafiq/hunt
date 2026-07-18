@@ -13,7 +13,6 @@ player:GetAttributeChangedSignal("AnxietyLevel"):Connect(function()
 	local level = player:GetAttribute("AnxietyLevel") or 0
 	local char = player.Character
 	local humanoid = char and char:FindFirstChild("Humanoid")
-
 	
 	if level > 20 then
 		colorEffect.Saturation = -(level / 100) * 1.5

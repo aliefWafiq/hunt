@@ -13,14 +13,15 @@ local VotedPlayer = ReplicatedStorage:WaitForChild("VotedPlayer")
 
 EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
 	local CamPart = ReplicatedStorage:FindFirstChild("camPart"):Clone()
+	local introPart = workspace.Labirin:WaitForChild("introPart")
 
 	CamPart.Parent = workspace.Labirin
-	CamPart.Position = workspace.Labirin:WaitForChild("introPart").Position
+	CamPart.CFrame = introPart.CFrame
 	camera.CameraSubject = CamPart
 	camera.CameraType = Enum.CameraType.Scriptable
 
 	local moveFactor = 0.0005
-	local previousMouseX, previousMouseY = nil, nil
+	local previousMouseX, previousMouseY = 0, 0
 	local MAX_POSITION = 0.5
 	local originalPosition = CamPart.Position
 
@@ -32,8 +33,6 @@ EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
 
 	local frame = UI
 	local secondMenu = frame.Vote.SurfaceGui.Frame
-
-	print("Emergency meeting triggered")
 
 	local scrollingFrame = frame.Players.SurfaceGui.ScrollingFrame
 	local template = scrollingFrame.UIListLayout.PlayerTemplate
@@ -65,19 +64,19 @@ EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
 			end
 
 			if moving then
-				CamPart.CFrame = CamPart.CFrame:Lerp(CFrame.new(targetPosition), 0.1)
+				CamPart.CFrame = CamPart.CFrame:Lerp(CFrame.new(targetPosition) * introPart.CFrame.Rotation, 0.1)
 			else
-				CamPart.CFrame = CamPart.CFrame:Lerp(CFrame.new(targetPosition), 0.2)
+				CamPart.CFrame = CamPart.CFrame:Lerp(CFrame.new(targetPosition) * introPart.CFrame.Rotation, 0.2)
 			end
 
-			local offsetUIX = (screenX / 4) * 0.009
-			local offsetUIY = (screenY / 5) * 0.009
+			camera.CFrame = camera.CFrame:Lerp(CamPart.CFrame, 0.2)
 
-			camera.CFrame = camera.CFrame:Lerp(CFrame.new(CamPart.Position), 0.2)
-			local finalTargetPosition = CamPart.Position + Vector3.new(-offsetUIX, -offsetUIY + 1, -10)
+			local localOffset = Vector3.new(0, 0, -15)
+			local finalTargetPosition = CamPart.CFrame * CFrame.new(localOffset)
+
 			if UI.PrimaryPart then
 				UI:SetPrimaryPartCFrame(
-					UI.PrimaryPart.CFrame:Lerp(CFrame.new(finalTargetPosition) * CFrame.Angles(0, math.rad(23), 0), 0.1)
+					finalTargetPosition * CFrame.Angles(0, math.rad(23), 0)
 				)
 			end
 
@@ -104,8 +103,7 @@ EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
 		clone.Name = player.Name
 		clone.Username.Text = player.Name
 
-		local content, isReady =
-			Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+		local content, isReady = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 
 		clone.PlayerIcon.Image = content
 		clone.Parent = scrollingFrame
@@ -141,8 +139,7 @@ VotedPlayer.OnClientEvent:Connect(function(player, voteCount, isImpostor, draw)
 		votedPlayerGui.TotalVote.Transparency = 1
 		return
 	else
-		local content, isReady =
-			Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+		local content, isReady = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
 
 		votedPlayerGui.PlayerIcon.Image = content
 		votedPlayerGui.TotalVote.Text = "Vote total: " .. voteCount
