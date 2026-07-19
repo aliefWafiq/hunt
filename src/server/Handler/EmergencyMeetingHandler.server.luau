@@ -54,7 +54,7 @@ local function calculateVoted()
 				VotedPlayer:FireAllClients(targetPlayer, maxVote, false, false)
 			end
 			task.wait(5)
-			targetPlayer.Character.Humanoid.Health = 0
+			targetPlayer.Character.Humanoid.Health = 100
 		else
 			VotedPlayer:FireAllClients("Skipped", 0, false)
 		end

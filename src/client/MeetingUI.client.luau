@@ -3,13 +3,15 @@ local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local renderSteppedConnection = nil
 
 local timer = 35
 
 local EmergencyMeetingAnnounce = ReplicatedStorage:WaitForChild("EmergencyMeetingAnnounce")
 local VotePlayer = ReplicatedStorage:WaitForChild("VotePlayer")
-
 local VotedPlayer = ReplicatedStorage:WaitForChild("VotedPlayer")
+
+local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
 
 EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
 	local CamPart = ReplicatedStorage:FindFirstChild("camPart"):Clone()
@@ -39,7 +41,7 @@ EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
 
 	local timerGui = secondMenu.Timer
 
-	RunService.RenderStepped:Connect(function()
+	renderSteppedConnection = RunService.RenderStepped:Connect(function()
 		local mouse = player:GetMouse()
 
 		local screenX = camera.ViewportSize.X
@@ -93,7 +95,7 @@ EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
 
 	task.spawn(function()
 		for i = timer, 0, -1 do
-			timerGui.Text = "Voting time: " .. i
+			timerGui.Text = i
 			task.wait(1)
 		end
 	end)
@@ -126,23 +128,44 @@ end)
 VotedPlayer.OnClientEvent:Connect(function(player, voteCount, isImpostor, draw)
 	local frame = workspace.Labirin:WaitForChild("VoteUi")
 	local votedPlayerGui = frame.Vote.SurfaceGui.Frame.VotedPlayerGui
+	local VoteResult = frame.Vote.SurfaceGui.Frame.VoteResult
+
+	local UI = workspace.Labirin:WaitForChild("VoteUi")
+	local CamPart = workspace.Labirin:WaitForChild("camPart")
 
 	votedPlayerGui.Visible = true
 	if player.Name == nil then
 		votedPlayerGui.Username.Text = "No one voted"
 		votedPlayerGui.PlayerIcon.Transparency = 1
 		votedPlayerGui.TotalVote.Transparency = 1
-		return
+		VoteResult.Text = "No Sacrifice Made"
 	elseif draw then
 		votedPlayerGui.Username.Text = "Draw"
 		votedPlayerGui.PlayerIcon.Transparency = 1
 		votedPlayerGui.TotalVote.Transparency = 1
-		return
+		VoteResult.Text = "Draw, No Sacrifice Made"
 	else
 		local content, isReady = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
-
 		votedPlayerGui.PlayerIcon.Image = content
 		votedPlayerGui.TotalVote.Text = "Vote total: " .. voteCount
 		votedPlayerGui.Username.Text = player.Name
+
+		if isImpostor then
+			VoteResult.Text = "May Lord forgive ".. player.Name.." Sins"
+		else
+			VoteResult.Text = "Meaningless Sacrifice"
+		end
 	end
+
+	task.wait(5)
+	VoteResult.Text = ""
+	
+	renderSteppedConnection:Disconnect()
+	renderSteppedConnection = nil
+
+	camera.CameraSubject = humanoid
+	camera.CameraType = Enum.CameraType.Custom
+
+	UI:Destroy()
+	CamPart:Destroy()
 end)
