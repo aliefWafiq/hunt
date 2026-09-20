@@ -1,30 +1,43 @@
-local player = game.Players.LocalPlayer
-local lighting = game:GetService("Lighting")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
 
-local colorEffect = lighting:FindFirstChild("AnxietyColor") or Instance.new("ColorCorrectionEffect")
-colorEffect.Name = "AnxietyColor"
-colorEffect.Parent = lighting
+local Labirin = workspace:WaitForChild("Labirin")
+local CamProp = Labirin:WaitForChild("CamProp")
 
-colorEffect.Saturation = 0
-colorEffect.Contrast = 0
-colorEffect.Brightness = 0
+camera.CameraType = Enum.CameraType.Scriptable
 
-player:GetAttributeChangedSignal("AnxietyLevel"):Connect(function() 
-	local level = player:GetAttribute("AnxietyLevel") or 0
-	local char = player.Character
-	local humanoid = char and char:FindFirstChild("Humanoid")
-	
-	if level > 20 then
-		colorEffect.Saturation = -(level / 100) * 1.5
-		colorEffect.Contrast = -(level / 100) * 0.5
-		colorEffect.Brightness = -(level / 100) * 0.1
-	else
-		colorEffect.Saturation = 0
-		colorEffect.Contrast = 0
-		colorEffect.Brightness = 0
-	end
-	
-	if level >= 100 then
-		humanoid.WalkSpeed = 16
+local lookCamera = false
+local currentCamPart = nil
+
+local function setupTrigger(triggerPart)
+	if not triggerPart:IsA("BasePart") then return end
+	if not triggerPart.Name:match("^Trigger%d+$") then return end
+	local index = triggerPart.Name:match("%d+$")
+
+	task.spawn(function() 
+		local camPart = CamProp:WaitForChild("CamPoint" .. index, 10)
+		if not camPart then return end
+
+		triggerPart.Touched:Connect(function(hit)
+			local character = hit.Parent
+			local humanoid = character and character:FindFirstChild("Humanoid")
+			if humanoid and character == player.Character then
+				lookCamera = true
+				currentCamPart = camPart
+			end
+		end)
+	end)
+end
+
+for _, child in ipairs(CamProp:GetChildren()) do
+	setupTrigger(child)
+end
+CamProp.ChildAdded:Connect(setupTrigger)
+
+RunService.RenderStepped:Connect(function()
+	if lookCamera and currentCamPart then
+		camera.CFrame = currentCamPart.CFrame
 	end
 end)
