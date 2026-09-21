@@ -1,3 +1,6 @@
+-- local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- local EmergencyMeetingAnnounce = ReplicatedStorage:WaitForChild("EmergencyMeetingAnnounce")
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
@@ -10,6 +13,15 @@ camera.CameraType = Enum.CameraType.Scriptable
 
 local lookCamera = false
 local currentCamPart = nil
+
+-- if EmergencyMeetingAnnounce then
+-- 	EmergencyMeetingAnnounce.OnClientEvent:Connect(function()
+-- 		lookCamera = false
+-- 		currentCamPart = nil
+
+-- 		RunService.RenderStepped:Disconnect() -- lanjut buat fix camera waktu emergency meeting
+-- 	end)
+-- end
 
 local function setupTrigger(triggerPart)
 	if not triggerPart:IsA("BasePart") then return end
